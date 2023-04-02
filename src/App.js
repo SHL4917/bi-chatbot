@@ -4,29 +4,26 @@ import {
   httpsCallable,
   connectFunctionsEmulator,
 } from "firebase/functions";
-import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import SendIcon from "./icons/SendIcon";
+import app from "./config/FirebaseConfig"
+import FeedbackForm from "./FeedbackForm";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAgby7hOBRU-eoAXNvJ53MoVOzOe1TBEsE",
-  authDomain: "bi-chatbot-434f4.firebaseapp.com",
-  projectId: "bi-chatbot-434f4",
-  storageBucket: "bi-chatbot-434f4.appspot.com",
-  messagingSenderId: "95059422040",
-  appId: "1:95059422040:web:235dfda8982af2b214d32d",
-  measurementId: "G-SCE2JDXTLF",
-};
-
-// Initialize Firebase
-
-const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const functions = getFunctions(app);
 
 const hostname = window.location.hostname;
+
+const startText = `Hello! I am a chatbot with contextual information on:
+
+PSSCOC Construction Works 2020
+PSSCOC Design and Build 2020
+SOP Act for Building and Construction 2021
+Workplace Safety and Health Act 2014
+
+Ask me anything related to these topics and I'll do my best to answer them!
+`;
 
 if (hostname === "localhost") {
   connectFunctionsEmulator(functions, "localhost", 5001);
@@ -35,15 +32,25 @@ if (hostname === "localhost") {
 function App() {
   const [answer, setAnswer] = useState("");
   const [question, setQuestion] = useState("");
+  const [showFeedbackText, setShowFeedbackText] = useState(false);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
   const submitQuestion = (formData) => {
     setAnswer("Submitting question, please hold on...");
-    setQuestion(formData.question)
+    setQuestion(formData.question);
+    reset();
     const submitQ = httpsCallable(functions, "submitQuestion");
     submitQ({ question: formData.question })
       .then((result) => {
-        console.log(result);
         setAnswer(result.data);
+        setShowFeedbackText(true);
       })
       .catch((err) => {
         setAnswer(
@@ -52,49 +59,95 @@ function App() {
       });
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
   const handleKeypress = (e) => {
-    e.target.style.height = 'inherit';
+    e.target.style.height = "inherit";
     e.target.style.height = `${Math.min(e.target.scrollHeight, 300)}px`;
-    if(e.which === 13 && !e.shiftKey) {
+    if (e.which === 13 && !e.shiftKey) {
       e.preventDefault();
-  
+
       handleSubmit(submitQuestion)();
     }
-  }
+  };
 
   return (
-    <div class="flex flex-col min-h-screen">
-      <div class="flex flex-col">
-        <div>Hello!</div>
-        <div class="whitespace-pre-line">{question}</div>
-        <div class="whitespace-pre-line">{answer}</div>
+    <div className="flex flex-col">
+      <div className="flex flex-col min-h-screen overflow-auto">
+        <div className="flex flex-col items-start m-4">
+          <div className="text-sm rounded-lg bg-blue-600 text-white px-4 rounded-bl-none">
+            Chat-BI
+          </div>
+          <div className="flex flex-col space-y-2 max-w-sm md:max-w-2xl items-start">
+            <div className="whitespace-pre-wrap text-xl px-4 py-2 rounded-lg rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
+              {startText}
+            </div>
+          </div>
+        </div>
+        <div
+          style={{ display: question ? "" : "none" }}
+          className="flex flex-col items-end m-4"
+        >
+          <div className="flex flex-col space-y-2 max-w-sm md:max-w-2xl items-start">
+            <div className="whitespace-pre-wrap text-xl px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">
+              {question}
+            </div>
+          </div>
+        </div>
+        <div
+          style={{ display: question ? "" : "none" }}
+          className="flex flex-col items-start m-4"
+        >
+          <div className="text-sm rounded-lg bg-blue-600 text-white px-4 rounded-bl-none">
+            Chat-BI
+          </div>
+          <div className="flex flex-col space-y-2 max-w-sm md:max-w-2xl items-start">
+            <div className="whitespace-pre-wrap text-xl px-4 py-2 rounded-lg inline-block rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
+              {answer}
+            </div>
+          </div>
+        </div>
+        <div
+          style={{ display: showFeedbackText ? "" : "none" }}
+          className="flex flex-col items-start m-4"
+        >
+          <div className="text-sm rounded-lg bg-blue-600 text-white px-4 rounded-bl-none">
+            Chat-BI
+          </div>
+          <div className="flex flex-col space-y-2 max-w-sm md:max-w-2xl items-start">
+            <div className="whitespace-pre-wrap text-xl px-4 py-2 rounded-lg inline-block rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
+              How did I fare?
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowFeedbackForm(true)}
+            className="text-white bg-gradient-to-br text-xl from-green-400 to-blue-600 focus:ring-4 focus:outline-none focus:ring-green-200 rounded-lg px-4 py-2 rounded-tl-none text-center"
+          >
+            Feedback
+          </button>
+        </div>
       </div>
-      <div class="grow h-full"></div>
       <form
-        class="flex items-center py-2 px-3 bg-gray-100 rounded-lg dark:bg-gray-700"
+        className="sticky bottom-0 flex items-center py-2 px-3 bg-gray-100"
         onSubmit={handleSubmit(submitQuestion)}
       >
         <textarea
           rows="1"
           type="text"
           name="question"
-          class="block mx-4 p-2.5 w-full text-gray-900 bg-white rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="block mx-4 p-2.5 w-full text-xl text-gray-900 bg-white rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Ask away!"
           onKeyDown={handleKeypress}
-          {...register("question")}
+          {...register("question", {
+            required: true,
+            minLength: 3,
+          })}
         ></textarea>
         <button
           type="submit"
-          class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
+          className="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100"
         >
           <svg
-            class="w-6 h-6 rotate-90"
+            className="w-6 h-6 rotate-90"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -103,6 +156,13 @@ function App() {
           </svg>
         </button>
       </form>
+      <FeedbackForm
+        toggle={setShowFeedbackForm}
+        display={showFeedbackForm}
+        submitted={feedbackSubmitted}
+        toggleSubmitted={setFeedbackSubmitted}
+        data={{ question: question, answer: answer }}
+      />
     </div>
   );
 }
