@@ -2,7 +2,6 @@
   "name": "bi-chatbot",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3003",
   "dependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
     "@testing-library/jest-dom": "^5.16.5",
@@ -17,6 +16,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
     "react-scripts": "5.0.1",
+    "tailwindcss": "^3.3.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
