@@ -17,12 +17,19 @@ const hostname = window.location.hostname;
 
 const startText = `Hello! I am a chatbot with contextual information on:
 
+Building Control Act 1989 (2020 Edition)
+Code for Environmental Sustainability of Buildings v4.0
+Design for Maintainability - Non-Residential
+Fire Code 2018
+Fire Safety Act 1993 (2020 Edition)
 PSSCOC Construction Works 2020
 PSSCOC Design and Build 2020
 SOP Act for Building and Construction 2021
 Workplace Safety and Health Act 2014
 
 Ask me anything related to these topics and I'll do my best to answer them!
+
+If you want to ask another question, just retype your question below or refresh the page.
 `;
 
 if (hostname === "localhost") {
@@ -77,7 +84,7 @@ function App() {
             Chat-BI
           </div>
           <div className="flex flex-col space-y-2 max-w-sm md:max-w-2xl items-start">
-            <div className="whitespace-pre-wrap text-xl px-4 py-2 rounded-lg rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
+            <div className="whitespace-pre-wrap px-4 py-2 rounded-lg rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
               {startText}
             </div>
           </div>
@@ -87,7 +94,7 @@ function App() {
           className="flex flex-col items-end m-4"
         >
           <div className="flex flex-col space-y-2 max-w-sm md:max-w-2xl items-start">
-            <div className="whitespace-pre-wrap text-xl px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">
+            <div className="whitespace-pre-wrap px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">
               {question}
             </div>
           </div>
@@ -100,7 +107,7 @@ function App() {
             Chat-BI
           </div>
           <div className="flex flex-col space-y-2 max-w-sm md:max-w-2xl items-start">
-            <div className="whitespace-pre-wrap text-xl px-4 py-2 rounded-lg inline-block rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
+            <div className="whitespace-pre-wrap px-4 py-2 rounded-lg inline-block rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
               {answer}
             </div>
           </div>
@@ -113,14 +120,14 @@ function App() {
             Chat-BI
           </div>
           <div className="flex flex-col space-y-2 max-w-sm md:max-w-2xl items-start">
-            <div className="whitespace-pre-wrap text-xl px-4 py-2 rounded-lg inline-block rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
+            <div className="whitespace-pre-wrap px-4 py-2 rounded-lg inline-block rounded-bl-none rounded-tl-none bg-gray-200 text-gray-600">
               How did I fare?
             </div>
           </div>
           <button
             type="button"
             onClick={() => setShowFeedbackForm(true)}
-            className="text-white bg-gradient-to-br text-xl from-green-400 to-blue-600 focus:ring-4 focus:outline-none focus:ring-green-200 rounded-lg px-4 py-2 rounded-tl-none text-center"
+            className="text-white bg-gradient-to-br from-green-400 to-blue-600 focus:ring-4 focus:outline-none focus:ring-green-200 rounded-lg px-4 py-2 rounded-tl-none text-center"
           >
             Feedback
           </button>
