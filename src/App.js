@@ -53,6 +53,7 @@ function App() {
     setAnswer("Submitting question, please hold on...");
     setQuestion(formData.question);
     reset();
+    setShowFeedbackText(false);
     const submitQ = httpsCallable(functions, "submitQuestion");
     submitQ({ question: formData.question })
       .then((result) => {
